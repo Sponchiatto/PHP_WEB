@@ -16,8 +16,8 @@ class ProdutoRepositorio
             $dados['tipo'],
             $dados['nome'],
             $dados['descricao'],
+            $dados['preco'],
             $dados['imagem'],
-            $dados['preco']
         );
     }
 
@@ -71,14 +71,14 @@ class ProdutoRepositorio
 
     public function salvar(Produto $produto)
     {
-        $sql = "INSERT INTO produtos (nome, descricao, imagem, preco, tipo) VALUES 
-        (:nome, :descricao, :imagem, :preco, :tipo)";
+        $sql = "INSERT INTO produtos (tipo, nome, descricao, preco, imagem) VALUES 
+        (:tipo, :nome, :descricao, :preco, :imagem)";
         $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':tipo', $produto->getTipo(), PDO::PARAM_STR);
         $statement->bindValue(':nome', $produto->getNome(), PDO::PARAM_STR);
         $statement->bindValue(':descricao', $produto->getDescricao(), PDO::PARAM_STR);
-        $statement->bindValue(':imagem', $produto->getImagem(), PDO::PARAM_STR);
         $statement->bindValue(':preco', $produto->getPreco(), PDO::PARAM_STR);
-        $statement->bindValue(':tipo', $produto->getTipo(), PDO::PARAM_STR);
+        $statement->bindValue(':imagem', $produto->getImagem(), PDO::PARAM_STR);
         $statement->execute();
     }
 }

@@ -4,13 +4,13 @@ require "src/Model/Produto.php";
 require "src/Repository/ProdutoRepositorio.php";
 
 if (isset($_POST['cadastro'])) {
-    $produto = new Produto(null, $POST['tipo'], $POST['nome'], $POST['descricao'], $POST['preco'], $POST['imagem']);
+    $produto = new Produto(null, $_POST['tipo'], $_POST['nome'], $_POST['descricao'], $_POST['preco'], $_POST['imagem']);
+
+    $produtosRepositorio = new ProdutoRepositorio($pdo);
+    $produtosRepositorio->salvar($produto);
+
+    header(header: "Location: admin.php");
 }
-
-$produtosRepositorio = new ProdutoRepositorio($pdo);
-$produtosRepositorio->salvar($produto);
-
-header(header: "Location: admin.php");
 
 ?>
 <!doctype html>
