@@ -12,7 +12,7 @@ $produtosAlmoco = $statement->fetchAll(PDO::FETCH_ASSOC);
 
 // Transformando os produtos do almoço em objetos da classe Produto
 $dadosAlmoco = array_map(function ($almoco) {
-    return new Produto($almoco["id"], $almoco["tipo"], $almoco["nome"], $almoco["descricao"], $almoco["imagem"], $almoco["preco"]);
+    return new Produto($almoco["id"], $almoco["tipo"], $almoco["nome"], $almoco["descricao"], $almoco["preco"], $almoco["imagem"]);
 }, $produtosAlmoco);
 ?>
 

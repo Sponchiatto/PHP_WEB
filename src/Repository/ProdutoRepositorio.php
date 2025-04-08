@@ -18,6 +18,7 @@ class ProdutoRepositorio
             $dados['descricao'],
             $dados['preco'],
             $dados['imagem'],
+
         );
     }
 
@@ -29,7 +30,7 @@ class ProdutoRepositorio
 
         // Transformando os produtos do café em objetos da classe Produto
         $dadosCafe = array_map(function ($cafe) {
-            return new Produto($cafe["id"], $cafe["tipo"], $cafe["nome"], $cafe["descricao"], $cafe["imagem"], $cafe["preco"]);
+            return new Produto($cafe["id"], $cafe["tipo"], $cafe["nome"], $cafe["descricao"], $cafe["preco"], $cafe["imagem"]);
         }, $produtosCafe);
 
         return $dadosCafe;
@@ -74,6 +75,30 @@ class ProdutoRepositorio
         $sql = "INSERT INTO produtos (tipo, nome, descricao, preco, imagem) VALUES 
         (:tipo, :nome, :descricao, :preco, :imagem)";
         $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':tipo', $produto->getTipo(), PDO::PARAM_STR);
+        $statement->bindValue(':nome', $produto->getNome(), PDO::PARAM_STR);
+        $statement->bindValue(':descricao', $produto->getDescricao(), PDO::PARAM_STR);
+        $statement->bindValue(':preco', $produto->getPreco(), PDO::PARAM_STR);
+        $statement->bindValue(':imagem', $produto->getImagem(), PDO::PARAM_STR);
+        $statement->execute();
+    }
+
+    public function buscar(int $id)
+    {
+        $sql = "SELECT * FROM produtos WHERE id = :id";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':id', $id, PDO::PARAM_INT);
+        $statement->execute();
+
+        $dados = $statement->fetch(PDO::FETCH_ASSOC);
+
+        return $this->formarObjeto($dados);
+    }
+
+    public function editar(Produto $produto) {
+        $sql = "UPDATE produtos SET tipo = :tipo, nome = :nome, descricao = :descricao, preco = :preco, imagem = :imagem WHERE id = :id";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindValue(':id', $produto->getId(), PDO::PARAM_INT);
         $statement->bindValue(':tipo', $produto->getTipo(), PDO::PARAM_STR);
         $statement->bindValue(':nome', $produto->getNome(), PDO::PARAM_STR);
         $statement->bindValue(':descricao', $produto->getDescricao(), PDO::PARAM_STR);
