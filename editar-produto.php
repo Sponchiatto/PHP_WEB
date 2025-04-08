@@ -7,12 +7,20 @@ require "src/Repository/ProdutoRepositorio.php";
 $produtosRepositorio = new ProdutoRepositorio($pdo);
 
 if (isset($_POST['editar'])) {
-  $produto = new Produto($_POST['id'], $_POST['tipo'], $_POST['nome'], $_POST['descricao'], $_POST['preco'], $_POST['imagem']);
+  $produto = new Produto($_POST['id'], $_POST['tipo'], $_POST['nome'], $_POST['descricao'], $_POST['preco']);
+
+  if ($_FILES['imagem']['error'] == UPLOAD_ERR_OK){
+    $produto->setImagem(uniqid() . $_FILES['imagem']['name']);
+    move_uploaded_file($_FILES['imagem']['tmp_name'], $produto->getImagemDiretorio());
+  }
+
+
   $produtosRepositorio->editar($produto);
   header("Location: admin.php");
 } else {
   $produto = $produtosRepositorio->buscar($_GET['id']);
 }
+
 
 ?>
 
@@ -44,7 +52,7 @@ if (isset($_POST['editar'])) {
       <img class="ornaments" src="img/ornaments-coffee.png" alt="ornaments">
     </section>
     <section class="container-form">
-      <form method="post">
+      <form method="post" enctype="multipart/form-data">
 
         <label for="nome">Nome</label>
         <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" value="<?= $produto->getNome() ?>" required>

@@ -4,7 +4,20 @@ require "src/Model/Produto.php";
 require "src/Repository/ProdutoRepositorio.php";
 
 if (isset($_POST['cadastro'])) {
-    $produto = new Produto(null, $_POST['tipo'], $_POST['nome'], $_POST['descricao'], $_POST['preco'], $_POST['imagem']);
+    $produto = new Produto(
+        null,
+        $_POST['tipo'],
+        $_POST['nome'],
+        $_POST['descricao'],
+        $_POST['preco']
+    );
+
+    if (isset($_FILES['imagem'])) {
+        $produto->setImagem(uniqid() . $_FILES['imagem']['name']);
+
+        move_uploaded_file($_FILES['imagem']['tmp_name'], $produto->getImagemDiretorio());
+    }
+
 
     $produtosRepositorio = new ProdutoRepositorio($pdo);
     $produtosRepositorio->salvar($produto);
@@ -13,6 +26,7 @@ if (isset($_POST['cadastro'])) {
 }
 
 ?>
+
 <!doctype html>
 <html lang="pt-br">
 
@@ -41,7 +55,7 @@ if (isset($_POST['cadastro'])) {
             <img class="ornaments" src="img/ornaments-coffee.png" alt="ornaments">
         </section>
         <section class="container-form">
-            <form method="post">
+            <form method="post" enctype="multipart/form-data">
 
                 <label for="nome">Nome</label>
                 <input type="text" id="nome" name="nome" placeholder="Digite o nome do produto" required>
